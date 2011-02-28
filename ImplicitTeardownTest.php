@@ -16,7 +16,16 @@ class ImplicitTeardownTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(false, 'First test failure message.');
     }
 
-    public function testanother(){}
+    public function testSomethingElseWhichCouldResultInAFatalError()
+    {
+        // suppose your SUT code returns this or a scalar for a
+        // regression or bug
+        $object = null;
+
+        $this->assertInstanceOf('SplQueue', $object);
+
+        $this->assertEquals('dummy', $object->dequeue());
+    }
 
     /**
      * A workaround to being able to support expect() methods
