@@ -23,9 +23,22 @@ class MockObjectTest extends PHPUnit_Framework_TestCase
         $sut->renderOn($view);
     }
 
-    public function testUsers...()
+    public function testUsersSelectUsersWhoseNameStartsWithAGivenPrefix()
     {
-        
+        $users = array(
+            new User('george', true),
+            $john = new User('john', true),
+            new User('mark', true),
+            new User('steve', true)
+        );
+
+        $view = $this->getMock('UsersView');
+        $view->expects($this->once())
+             ->method('add')
+             ->with($john);
+
+        $sut = new UsersController($users, 'j');
+        $sut->renderOn($view);
     }
 
 }
@@ -46,17 +59,19 @@ interface UsersView
 class UsersController
 {
     private $users;
+    private $prefixFilter;
 
-    public function __construct(array $users)
+    public function __construct(array $users, $prefixFilter = '')
     {
         $this->users = $users;
+        $this->prefixFilter = $prefixFilter;
     }
 
     public function renderOn(UsersView $view)
     {
         foreach ($this->users as $user)
         {
-            if ($user->isActive()) {
+            if ($user->isActive() && $user->startsWith($this->prefixFilter)) {
                 $view->add($user);
             }
         }
@@ -71,13 +86,28 @@ class UsersController
  */
 class User
 {
+    private $name;
+    private $active;
+
     public function __construct($name, $active)
     {
+        $this->name = $name;
         $this->active = $active;
     }
 
     public function isActive()
     {
         return $this->active;
+    }
+
+    public function startsWith($prefix)
+    {
+        if ($prefix == '') {
+            return true;
+        }
+        if (strstr($this->name, $prefix) == $this->name) {
+            return true;
+        }
+        return false;
     }
 }
