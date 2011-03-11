@@ -1,4 +1,9 @@
 <?php
+/**
+ * The System Under Test should use this database-related class to move Posts around.
+ * However we inject a FakePostDao in order to avoid using a real database in this test,
+ * and at the same time better define the interface between the two.
+ */
 class FakeObjectTest extends PHPUnit_Framework_TestCase
 {
     public function testMergesTwoThreads()
@@ -25,6 +30,9 @@ class FakeObjectTest extends PHPUnit_Framework_TestCase
     }
 }
 
+/**
+ * The SUT.
+ */
 class ForumManager
 {
     private $dao;
@@ -45,6 +53,9 @@ class ForumManager
     }
 }
 
+/**
+ * Interface for the collaborator to substitute with the Test Double.
+ */
 interface PostsDao
 {
     public function getThread($id);
@@ -52,6 +63,9 @@ interface PostsDao
     public function addThread($id, array $thread);
 }
 
+/**
+ * Fake implementation.
+ */
 class FakePostDao implements PostsDao
 {
     private $threads;
