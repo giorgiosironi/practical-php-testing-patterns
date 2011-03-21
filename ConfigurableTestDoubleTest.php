@@ -42,6 +42,26 @@ class ConfigurableTestDoubleTest extends PHPUnit_Framework_TestCase
         $statistics = new Statistics($source);
         $this->assertEquals(50000, $statistics->getAverage());
     }
+
+    /**
+     * When you don't like PHPUnit's interface, or it is a too low level
+     * of abstraction, you can always wrap it and build something more friendly.
+     */
+    public function testCalculatesAverageVisitorsNumberWithGeneratedStubAndAFriendlyInterface()
+    {
+        $source = $this->getMock('DataSource');
+        $this->addSamples($source, array(40000, 50000, 100000, 20000, 40000));
+
+        $statistics = new Statistics($source);
+        $this->assertEquals(50000, $statistics->getAverage());
+    }
+
+    private function addSamples($mock, array $samples)
+    {
+        $mock->expects($this->any())
+               ->method('getSamples')
+               ->will($this->returnValue($samples));
+    }
 }
 
 /**
