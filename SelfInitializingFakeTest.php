@@ -22,10 +22,17 @@ class SelfInitializingFakeTest extends PHPUnit_Framework_TestCase
 
 class GoogleMapsDirectionsSelfInitializingFake
 {
+    private $cache = array();
+
     public function getDirections($from, $to)
     {
         $url = "http://maps.googleapis.com/maps/api/directions/xml?origin={$from}&destination={$to}&sensor=false";
-        $response = file_get_contents($url);
+        if (isset($this->cache[$url])) {
+            $response = $this->cache[$url];
+        } else {
+            $response = file_get_contents($url);
+            $this->cache[$url] = $response;
+        }
         return new SimpleXMLElement($response);
     }
 }
